@@ -20,6 +20,7 @@
     "context/",
     "mock/",
     "config/",
+    "constants/",
     "utils/",
     "hooks/",
     "pages/",

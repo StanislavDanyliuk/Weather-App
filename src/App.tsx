@@ -5,8 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import { ThemeProvider } from './context/theme-context'
 
-import CityPage from './pages/city-page'
-import WeatherDashboard from './pages/weather-dashboard-page'
+import { routes } from './constants/routes'
 
 import { Layout } from './components/layout'
 
@@ -21,11 +20,9 @@ function App() {
         <ThemeProvider defaultTheme="system">
           <Layout>
             <Routes>
-              <Route path="/" element={<WeatherDashboard />} />
-              <Route path="/city/:cityName" element={<CityPage />} />
-              <Route path="/2" element={<div>2</div>} />
-              <Route path="/3" element={<div>3</div>} />
-              <Route path="*" element={<div>404 - Not Found</div>} />
+              {routes.map((route, index) => (
+                <Route key={index} path={route.path} element={route.element} />
+              ))}
             </Routes>
           </Layout>
         </ThemeProvider>
