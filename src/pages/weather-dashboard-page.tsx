@@ -1,4 +1,4 @@
-import { AlertTriangle, MapPin, RefreshCw, Terminal } from 'lucide-react'
+import { AlertTriangle, MapPin, RefreshCw } from 'lucide-react'
 
 import { useGeolocation } from '../hooks/useGeolocation'
 
