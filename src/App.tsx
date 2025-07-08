@@ -11,7 +11,19 @@ import { Layout } from './components/layout'
 
 import './App.css'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 10,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+})
 
 function App() {
   return (

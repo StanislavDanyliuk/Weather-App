@@ -1,17 +1,18 @@
-import { AlertTriangle, MapPin, RefreshCw } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 
+import { useForecastQuery } from '../hooks/useForecast'
 import { useGeolocation } from '../hooks/useGeolocation'
+import { useReverseGeocodeQuery } from '../hooks/useReverseGeocode'
+import { useWeatherQuery } from '../hooks/useWeather'
 
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert'
+import CurrentWeather from '../components/currentWeather'
+import ErrorAlert from '../components/errorAlert'
+import HourlyTemperature from '../components/hourlyTemperature'
 import { Button } from '../components/ui/button'
 import WeatherSkeleton from '../components/weather-skeleton'
+import WeatherDetails from '../components/weatherDetails'
 
 const WeatherDashboard = () => {
-  // const { data, isLoading, refetch } = useQuery({
-  //   queryKey: ['weather', 'current'],
-  //   queryFn: () => weatherAPI.getCurrentWeather({ lat: 0, lon: 0 }),
-  //   refetchOnWindowFocus: false,
-  // })
   const {
     coordinates,
     error: locationError,
@@ -19,32 +20,68 @@ const WeatherDashboard = () => {
     getLocation,
   } = useGeolocation()
 
+  const {
+    data: locationData,
+    refetch: refetchLocation,
+    isFetching: locationFetching,
+  } = useReverseGeocodeQuery(coordinates)
+  const {
+    data: forecastData,
+    refetch: refetchForecast,
+    isError: forecastError,
+    isLoading: forecastLoading,
+    isFetching: forecastFetching,
+  } = useForecastQuery(coordinates)
+  const {
+    data: weatherData,
+    refetch: refetchWeather,
+    isError: weatherError,
+    isLoading: weatherLoading,
+    isFetching: weatherFetching,
+  } = useWeatherQuery(coordinates)
+
   const handleRefresh = () => {
     getLocation()
     if (coordinates) {
-      // refetch()
+      refetchWeather()
+      refetchLocation()
+      refetchForecast()
     }
   }
 
-  if (locationLoading) {
+  const locationName = locationData?.[0]
+
+  if (locationLoading || forecastLoading || weatherLoading) {
     return <WeatherSkeleton />
   }
   if (locationError) {
     return (
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Location error</AlertTitle>
-        <AlertDescription>{locationError}</AlertDescription>
-        <Button
-          onClick={getLocation}
-          variant={'outline'}
-          size={'icon'}
-          className="w-fit p-2"
-        >
-          <MapPin className="mr-2 h-2 w-4" />
-          Enable Location
-        </Button>
-      </Alert>
+      <ErrorAlert
+        title="Location Error"
+        description={locationError}
+        onRetry={getLocation}
+        btnTitle="Retry"
+      />
+    )
+  }
+  if (!coordinates) {
+    return (
+      <ErrorAlert
+        title="Location Required"
+        description="Please enable location services to see your local weather."
+        onRetry={getLocation}
+        btnTitle="Retry"
+      />
+    )
+  }
+  if (forecastError || weatherError) {
+    return (
+      <ErrorAlert
+        title="Weather Data Error"
+        description="Unable to fetch weather data. Please try again later."
+        onRetry={handleRefresh}
+        btnTitle="Retry"
+      />
     )
   }
 
@@ -56,13 +93,23 @@ const WeatherDashboard = () => {
         <Button
           variant="outline"
           size={'icon'}
-          disabled={locationLoading}
+          disabled={locationFetching || forecastFetching || weatherFetching}
           onClick={handleRefresh}
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw
+            className={`h-4 w-4 ${locationFetching || forecastFetching || weatherFetching ? 'animate-spin' : ''}`}
+          />
         </Button>
       </div>
-      {/* <div>Current and Hourly weather/</div> */}
+      <div className="grid gap-6">
+        <div className="flex flex-col gap-4 lg:flex-row">
+          {weatherData && locationName && (
+            <CurrentWeather data={weatherData} locationName={locationName} />
+          )}
+          {forecastData && <HourlyTemperature data={forecastData} />}
+        </div>
+        <div>{weatherData && <WeatherDetails data={weatherData} />}</div>
+      </div>
     </div>
   )
 }
