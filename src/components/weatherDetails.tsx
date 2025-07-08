@@ -1,4 +1,4 @@
-import { format, formatDate } from 'date-fns'
+import { format } from 'date-fns'
 import { Compass, Gauge, type LucideIcon, Sunrise, Sunset } from 'lucide-react'
 
 import type { TWeatherData } from '../types/types'
