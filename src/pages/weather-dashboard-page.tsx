@@ -9,8 +9,9 @@ import CurrentWeather from '../components/currentWeather'
 import ErrorAlert from '../components/errorAlert'
 import HourlyTemperature from '../components/hourlyTemperature'
 import { Button } from '../components/ui/button'
-import WeatherSkeleton from '../components/weather-skeleton'
 import WeatherDetails from '../components/weatherDetails'
+import WeatherForecast from '../components/weatherForecast'
+import WeatherSkeleton from '../components/weatherSkeleton'
 
 const WeatherDashboard = () => {
   const {
@@ -108,7 +109,11 @@ const WeatherDashboard = () => {
           )}
           {forecastData && <HourlyTemperature data={forecastData} />}
         </div>
-        <div>{weatherData && <WeatherDetails data={weatherData} />}</div>
+
+        <div className="md:grid-cols-2 grid items-start gap-6">
+          {weatherData && <WeatherDetails data={weatherData} />}
+          {forecastData && <WeatherForecast data={forecastData} />}
+        </div>
       </div>
     </div>
   )
