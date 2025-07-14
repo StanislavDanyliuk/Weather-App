@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { format } from 'date-fns'
-import { Clock, Loader2, Search, XCircle } from 'lucide-react'
+import { Clock, Loader2, Search, Star, XCircle } from 'lucide-react'
 
+import useFavorite from '../hooks/useFavorite'
 import useSearchHistory from '../hooks/useSearchHistory'
 import { useSearchLocations } from '../hooks/useSearchLocations'
 
@@ -25,13 +26,13 @@ const SearchBar = () => {
 
   const { data, isLoading } = useSearchLocations(query)
   const { addToHistory, clearHistory, history } = useSearchHistory()
+  const {  favorites } = useFavorite()
 
   const handleSelectLocation = (cityData: string) => {
     const [lat, lon, name, country] = cityData.split('|')
     setOpen(false)
     navigate(`city/${name}?lat=${lat}&lon=${lon}`)
 
-    //   Add to history
     addToHistory.mutate({
       query,
       name,
@@ -40,6 +41,10 @@ const SearchBar = () => {
       lon: parseFloat(lon),
     })
   }
+
+  useEffect(() => {
+    open && setQuery('')
+  }, [open])
   return (
     <>
       <Button
@@ -60,9 +65,28 @@ const SearchBar = () => {
           {query.length > 2 && !isLoading && (
             <CommandEmpty>No cities found.</CommandEmpty>
           )}
-          {/* <CommandGroup heading="Favorites">
-            <CommandItem>Calendar</CommandItem>
-          </CommandGroup> */}
+          {favorites.length > 0 && (
+            <CommandGroup heading="Favorites">
+              {favorites.map(({ lat, lon, name, country, state, id }) => (
+                <CommandItem
+                  key={id}
+                  value={`${lat}|${lon}|${name}|${country}`}
+                  onSelect={handleSelectLocation}
+                >
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <span>{name}</span>
+                  {state && (
+                    <span className="text-muted-foreground text-sm">
+                      | {state},
+                    </span>
+                  )}
+                  <span className="text-muted-foreground text-sm">
+                    {country}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
           {history.length > 0 && (
             <>
               <CommandSeparator />

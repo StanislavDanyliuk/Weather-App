@@ -7,6 +7,7 @@ import { useWeatherQuery } from '../hooks/useWeather'
 
 import CurrentWeather from '../components/currentWeather'
 import ErrorAlert from '../components/errorAlert'
+import FavoriteCities from '../components/favoriteCities'
 import HourlyTemperature from '../components/hourlyTemperature'
 import { Button } from '../components/ui/button'
 import WeatherDetails from '../components/weatherDetails'
@@ -88,7 +89,7 @@ const WeatherDashboard = () => {
 
   return (
     <div className="space-y-4">
-      {/* <div>Favorite Cities/</div> */}
+      <FavoriteCities />
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-bold tracking-tight">My Location</h1>
         <Button
@@ -110,7 +111,7 @@ const WeatherDashboard = () => {
           {forecastData && <HourlyTemperature data={forecastData} />}
         </div>
 
-        <div className="md:grid-cols-2 grid items-start gap-6">
+        <div className="grid items-start gap-6 md:grid-cols-2">
           {weatherData && <WeatherDetails data={weatherData} />}
           {forecastData && <WeatherForecast data={forecastData} />}
         </div>

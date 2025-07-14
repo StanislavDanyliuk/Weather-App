@@ -6,8 +6,8 @@ import { Button } from './ui/button'
 type ErrorAlertProps = {
   title: string
   description?: string
-  onRetry: () => void
-  btnTitle: string
+  onRetry?: () => void
+  btnTitle?: string
 }
 
 const ErrorAlert: React.FC<ErrorAlertProps> = ({
@@ -23,15 +23,17 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({
       <AlertDescription className="flex flex-col gap-4">
         <p>{description}</p>
       </AlertDescription>
-      <Button
-        onClick={onRetry}
-        variant={'outline'}
-        size={'icon'}
-        className="w-fit p-2"
-      >
-        <MapPin className="mr-2 h-2 w-4" />
-        {btnTitle}
-      </Button>
+      {btnTitle && onRetry && (
+        <Button
+          onClick={onRetry}
+          variant={'outline'}
+          size={'icon'}
+          className="w-fit p-2"
+        >
+          <MapPin className="mr-2 h-2 w-4" />
+          {btnTitle}
+        </Button>
+      )}
     </Alert>
   )
 }

@@ -12,7 +12,7 @@ const Header = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Logo theme={theme} />
         <div className="flex gap-4">
-          <SearchBar query="" />
+          <SearchBar />
           <ThemeToggler
             theme={theme}
             setTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
